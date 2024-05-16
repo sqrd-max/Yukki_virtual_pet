@@ -307,6 +307,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   username: sqrd
   maxMessages: 25
+  chatGPTManager: {fileID: 1570293917}
   chatPanel: {fileID: 1324723172}
   textObject: {fileID: 616412235767888685, guid: ef8eb00e8d654de4cb8bcfa6495a2c72, type: 3}
   chatBox: {fileID: 369045000}
@@ -701,7 +702,19 @@ MonoBehaviour:
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1570293917}
+        m_TargetAssemblyTypeName: ChatGPTManaager, Assembly-CSharp
+        m_MethodName: AskChatGPT
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnSubmit:
     m_PersistentCalls:
       m_Calls: []
@@ -935,8 +948,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 198, y: 114}
-  m_SizeDelta: {x: 312.0294, y: 100}
+  m_AnchoredPosition: {x: 173, y: 111}
+  m_SizeDelta: {x: 234.2838, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &442397094
 MonoBehaviour:
@@ -951,7 +964,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.48427665, g: 0.48427665, b: 0.48427665, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1830,6 +1843,65 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1537529614}
   m_CullTransparentMesh: 1
+--- !u!1 &1570293916
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1570293918}
+  - component: {fileID: 1570293917}
+  m_Layer: 0
+  m_Name: ChatGPT Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1570293917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1570293916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b71b74ce528fe254e850071d0c3e69b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1619235707}
+        m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
+        m_MethodName: set_text
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!4 &1570293918
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1570293916}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 530.24567, y: 1109.1328, z: -1732.64}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1603885997
 GameObject:
   m_ObjectHideFlags: 0
@@ -2521,6 +2593,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 295841472}
+  - {fileID: 1570293918}
   - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 832575519}
