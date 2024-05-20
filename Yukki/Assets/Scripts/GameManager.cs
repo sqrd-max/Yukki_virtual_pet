@@ -47,11 +47,7 @@ public class GameManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 SendMessageToChat(chatBox.text, Message.MessageType.userMessage);
-                if (chatGPTManager != null)
-                {
-                    chatGPTManager.AskChatGPT(chatBox.text); 
-                    chatBox.text = ""; 
-                }
+                chatBox.text = "";
             }
         }
         else if (!chatBox.isFocused && Input.GetKeyDown(KeyCode.Return))
