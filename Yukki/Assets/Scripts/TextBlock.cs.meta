@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: ebda9cdcabcbdca47857c06c57362d58
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - fbxModel: {fileID: 919132149155446097, guid: 65c0f35fe900d0e468378a89c8f5110f, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

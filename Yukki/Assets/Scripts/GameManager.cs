@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
 
     public ChatGPTManaager chatGPTManager;
     
-    public GameObject chatPanel, textObject;
+    public GameObject chatPanel, textObject, fbxModel;
     public TMP_InputField chatBox;
 
     public Color userMessage, yukkiMessage;
@@ -87,7 +87,11 @@ public class GameManager : MonoBehaviour
                 newMessage.textObject.alignment = TextAlignmentOptions.MidlineLeft;
                 newText.GetComponent<RectTransform>().pivot = new Vector2(0, 0.5f); 
             }
-
+            
+            RectTransform textRect = newMessage.textObject.GetComponent<RectTransform>();
+            Debug.Log("TMP_Text Size: " + textRect.rect.width + "x" + textRect.rect.height);
+            
+            // UpdateFBXModelSize(newMessage.textObject);
             messageList.Add(newMessage);
         }
         else
@@ -95,6 +99,23 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Failed to get TMP_Text component from instantiated text object.");
         }
     }
+    
+    // void UpdateFBXModelSize(TMP_Text textObject)
+    // {
+    //     RectTransform textRect = textObject.GetComponent<RectTransform>();
+    //     Vector2 textSize = new Vector2(textRect.rect.width, textRect.rect.height);
+    //
+    //     // Предполагаемые исходные размеры модели, к которым вы хотите привязать масштабирование
+    //     float baseWidth = 1000f; // Это примерное значение, его нужно подобрать под вашу модель
+    //     float baseHeight = 500f; // Это примерное значение, его нужно подобрать под вашу модель
+    //
+    //     // Вычисляем коэффициенты масштабирования относительно базового размера
+    //     float widthScaleFactor = textSize.x / baseWidth;
+    //     float heightScaleFactor = textSize.y / baseHeight;
+    //
+    //     // Применяем масштаб с учетом исходного масштаба и рассчитанных коэффициентов
+    //     fbxModel.transform.localScale = new Vector3(-200f * widthScaleFactor, -200f * heightScaleFactor, -200f);
+    // }
     
     Color MessageTypeColor(Message.MessageType messageType)
     {
@@ -109,6 +130,8 @@ public class GameManager : MonoBehaviour
         
         return color;
     }
+    
+    
 }
 
 [System.Serializable]

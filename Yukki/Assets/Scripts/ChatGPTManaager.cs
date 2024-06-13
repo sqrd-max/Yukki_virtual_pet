@@ -32,7 +32,7 @@ public class ChatGPTManaager : MonoBehaviour
             var chatResponse = response.Choices[0].Message;
             messages.Add(chatResponse);
             
-            Debug.Log(chatResponse.Content);
+            //Debug.Log(chatResponse.Content);
             
             OnResponse.Invoke(chatResponse.Content);
         }
