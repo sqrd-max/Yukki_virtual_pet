@@ -22,7 +22,7 @@ using System.ClientModel.Primitives;
 
 
 
-public class ChatGPTManaager : MonoBehaviour
+public class YukkiBrainManager : MonoBehaviour
 {
     public class AddAuthHeadersPolicy : PipelinePolicy
     {
@@ -121,6 +121,8 @@ public class ChatGPTManaager : MonoBehaviour
             Debug.LogError("Can't ask, while YukkiBrain credentials are not loaded");
             return;
         }
+        
+        
         AddAuthHeadersPolicy authHeadersPolicy = new()
         {
             ProjectId = "proj_rwNpbWOoZWYvLA71d4hRiUgD",
@@ -169,6 +171,7 @@ public class ChatGPTManaager : MonoBehaviour
                 else if (update is MessageContentUpdate contentUpdate)
                 {
                     Debug.Log(contentUpdate.Text);
+                    onResponse?.Invoke(contentUpdate.Text);
                 }
             }
             if (outputsToSubmit.Count > 0)

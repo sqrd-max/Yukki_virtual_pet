@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; 
+using TMPro;
+using UnityEngine.Serialization;
 
 
 public class GameManager : MonoBehaviour
@@ -10,10 +11,8 @@ public class GameManager : MonoBehaviour
     public string username;
     
     public int maxMessages = 25;
-
     
-    
-    public ChatGPTManaager chatGPTManager;
+    public YukkiBrainManager brainManager;
     
     public GameObject chatPanel, textObject, fbxModel;
     public TMP_InputField chatBox;
@@ -28,13 +27,13 @@ public class GameManager : MonoBehaviour
     
     void Start()
     {
-        if (chatGPTManager != null)
+        if (brainManager != null)
         {
-            chatGPTManager.onResponse.AddListener(HandleOpenAIResponse);
+            brainManager.onResponse.AddListener(HandleOpenAIResponse);
         }
         else
         {
-            Debug.LogError("ChatGPTManager is not assigned in GameManager");
+            Debug.LogError("YukkiBrainManager is not assigned in GameManager");
         }
         
         // Optionally, find the button by tag or name if it's not assigned
@@ -57,7 +56,7 @@ public class GameManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                chatGPTManager.AskWithText(chatBox.text);
+                brainManager.AskWithText(chatBox.text);
                 SendMessageToChat(chatBox.text, ChatMessage.MessageType.UserMessage);
                 CheckForAnimationCommand(chatBox.text);
                 chatBox.text = "";
