@@ -57,6 +57,7 @@ public class GameManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Return))
             {
+                chatGPTManager.AskWithText(chatBox.text);
                 SendMessageToChat(chatBox.text, ChatMessage.MessageType.UserMessage);
                 CheckForAnimationCommand(chatBox.text);
                 chatBox.text = "";
