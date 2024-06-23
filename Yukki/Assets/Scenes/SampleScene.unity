@@ -475,6 +475,7 @@ MonoBehaviour:
   textObject: {fileID: 616412235767888685, guid: ef8eb00e8d654de4cb8bcfa6495a2c72, type: 3}
   fbxModel: {fileID: 437690264}
   chatBox: {fileID: 369045000}
+  modelAnimator: {fileID: 209567297}
   userMessage: {r: 1, g: 1, b: 1, a: 1}
   yukkiMessage: {r: 0, g: 0.6719713, b: 1, a: 1}
   messageList: []
