@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     
     public GameObject chatPanel, textObject, fbxModel;
     public TMP_InputField chatBox;
-
+    public Animator modelAnimator;
     public Color userMessage, yukkiMessage;
     
     [SerializeField]
@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 SendMessageToChat(chatBox.text, Message.MessageType.userMessage);
+                CheckForAnimationCommand(chatBox.text);
                 chatBox.text = "";
             }
         }
@@ -58,7 +59,7 @@ public class GameManager : MonoBehaviour
 
 
 
-    public void SendMessageToChat(string text, Message.MessageType messageType)
+    void SendMessageToChat(string text, Message.MessageType messageType)
     {
         if (messageList.Count >= maxMessages)
         {
@@ -76,22 +77,11 @@ public class GameManager : MonoBehaviour
         {
             newMessage.textObject.text = newMessage.text;
             newMessage.textObject.color = MessageTypeColor(messageType);
-            
-            if (messageType == Message.MessageType.userMessage)
-            {
-                newMessage.textObject.alignment = TextAlignmentOptions.MidlineRight;
-                newText.GetComponent<RectTransform>().pivot = new Vector2(1, 0.5f);
-            }
-            else if (messageType == Message.MessageType.yukkiMessage)
-            {
-                newMessage.textObject.alignment = TextAlignmentOptions.MidlineLeft;
-                newText.GetComponent<RectTransform>().pivot = new Vector2(0, 0.5f); 
-            }
-            
+            newMessage.textObject.alignment = messageType == Message.MessageType.userMessage ?
+                TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+            newText.GetComponent<RectTransform>().pivot = new Vector2(messageType == Message.MessageType.userMessage ? 1 : 0, 0.5f);
+
             RectTransform textRect = newMessage.textObject.GetComponent<RectTransform>();
-            Debug.Log("TMP_Text Size: " + textRect.rect.width + "x" + textRect.rect.height);
-            
-            // UpdateFBXModelSize(newMessage.textObject);
             messageList.Add(newMessage);
         }
         else
@@ -116,6 +106,33 @@ public class GameManager : MonoBehaviour
     //     // Применяем масштаб с учетом исходного масштаба и рассчитанных коэффициентов
     //     fbxModel.transform.localScale = new Vector3(-200f * widthScaleFactor, -200f * heightScaleFactor, -200f);
     // }
+    
+    void CheckForAnimationCommand(string message)
+    {
+        message = message.ToLower();
+        if (message.Contains("walk"))
+        {
+            modelAnimator.SetTrigger("Walk");
+        }
+        else if (message.Contains("no") || message.Contains("head shake"))
+        {
+            modelAnimator.SetTrigger("HeadShakingNO");
+        }
+        else if (message.Contains("yes") || message.Contains("head nod"))
+        {
+            modelAnimator.SetTrigger("HeadNodYES");
+        }
+        else if (message.Contains("wave") || message.Contains("hand wave"))
+        {
+            modelAnimator.SetTrigger("HandWaving");
+        }
+        else if (message.Contains("angry"))
+        {
+            modelAnimator.SetTrigger("Angry");
+        }
+        
+    }
+
     
     Color MessageTypeColor(Message.MessageType messageType)
     {
