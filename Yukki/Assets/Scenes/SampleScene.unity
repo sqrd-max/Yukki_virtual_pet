@@ -1461,7 +1461,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1146463489}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11500000, guid: 678cbecf7dd74004aa59b814f21f4dd2, type: 3}
+        m_TargetAssemblyTypeName: UnityEngine.Object, UnityEngine
+        m_MethodName: set_name
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: OnPlayer1ButtonPressed
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1146463489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2388,21 +2400,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b71b74ce528fe254e850071d0c3e69b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnResponse:
+  onResponse:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1619235707}
-        m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
-        m_MethodName: set_text
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!4 &1570293918
 Transform:
   m_ObjectHideFlags: 0
