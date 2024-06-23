@@ -5,13 +5,14 @@ using UnityEngine.UI;
 using TMPro; 
 
 
-
 public class GameManager : MonoBehaviour
 {
     public string username;
     
     public int maxMessages = 25;
 
+    
+    
     public ChatGPTManaager chatGPTManager;
     
     public GameObject chatPanel, textObject, fbxModel;
