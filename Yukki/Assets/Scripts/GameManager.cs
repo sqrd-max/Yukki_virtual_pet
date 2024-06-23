@@ -139,7 +139,7 @@ public class GameManager : MonoBehaviour
         {
             modelAnimator.SetTrigger("HeadNodYES");
         }
-        else if (message.Contains("wave") || message.Contains("hand wave"))
+        else if (message.Contains("hello") || message.Contains("hand wave") || message.Contains("hi"))
         {
             modelAnimator.SetTrigger("HandWaving");
         }

@@ -31,7 +31,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: HeadShaking(NO)
+      name: HeadShakingNO
       takeName: HeadShaking(NO)
       internalID: -3144399741305206646
       firstFrame: 0
@@ -89,7 +89,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: HeadNod(YES)
+      name: HeadNodYES
       takeName: HeadNod(YES)
       internalID: -5243068296930864084
       firstFrame: 0
