@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour
     public Button player1Button;
     public Button player2Button;// You can assign this from the inspector
     public TMP_Text userNameText;
+    public TMP_Text yukkiCloudText;
+    public ChatMessage.MessageTypes lastMessageType = ChatMessage.MessageTypes.SystemMessage;
 
     public int currentUserId;
     public string[] availableAnimations = {
@@ -114,12 +116,35 @@ public class GameManager : MonoBehaviour
     }
 
 
-    void SendMessageToChat(string text, ChatMessage.MessageTypes messageTypes)
+    void SendMessageToChat(string text, ChatMessage.MessageTypes messageType)
     {
         if (messageList.Count >= maxMessages)
         {
             Destroy(messageList[0].textObject.gameObject);
             messageList.RemoveAt(0);
+        }
+
+        if (messageType == ChatMessage.MessageTypes.YukkiMessage && messageList.Count > 0 &&
+            messageList.Last().messageType == ChatMessage.MessageTypes.YukkiMessage)
+        {
+            
+            var lastMessage = messageList.Last();
+            
+            // It would be good to just update last message text like lastMessage.text += text;
+            // But it is difficult to update text on screen
+            
+            // So we update text based on previoud message
+            text = lastMessage.text + text;
+            
+            // And remove last message, so new message will have full text
+            messageList.Remove(lastMessage);
+            Destroy(lastMessage.textObject.gameObject);
+        }
+        
+        // We do it here as text is altered
+        if (messageType == ChatMessage.MessageTypes.YukkiMessage)
+        {
+            yukkiCloudText.text = text;
         }
 
         ChatMessage newChatMessage = new ChatMessage();
@@ -130,11 +155,12 @@ public class GameManager : MonoBehaviour
 
         if (newChatMessage.textObject != null)
         {
+            newChatMessage.messageType = messageType;
             newChatMessage.textObject.text = newChatMessage.text;
-            newChatMessage.textObject.color = GetMessageColorByType(messageTypes);
-            newChatMessage.textObject.alignment = messageTypes == ChatMessage.MessageTypes.UserMessage ?
+            newChatMessage.textObject.color = GetMessageColorByType(messageType);
+            newChatMessage.textObject.alignment = messageType == ChatMessage.MessageTypes.UserMessage ?
                 TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
-            newText.GetComponent<RectTransform>().pivot = new Vector2(messageTypes == ChatMessage.MessageTypes.UserMessage ? 1 : 0, 0.5f);
+            newText.GetComponent<RectTransform>().pivot = new Vector2(messageType == ChatMessage.MessageTypes.UserMessage ? 1 : 0, 0.5f);
 
             RectTransform textRect = newChatMessage.textObject.GetComponent<RectTransform>();
             messageList.Add(newChatMessage);
@@ -164,7 +190,6 @@ public class GameManager : MonoBehaviour
     
     void CheckForAnimationCommand(string animationName)
     {
-
         if (availableAnimations.Contains(animationName))
         {
             Debug.Log($"Playing animation: '{animationName}'");
@@ -198,7 +223,7 @@ public class ChatMessage
 {
     public string text;
     public TMP_Text textObject;
-    [FormerlySerializedAs("messageType")] public MessageTypes messageTypes;
+    public MessageTypes messageType;
     
     public enum MessageTypes
     {
