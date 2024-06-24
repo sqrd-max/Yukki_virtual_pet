@@ -105,14 +105,18 @@ public class GameManager : MonoBehaviour
     {
         if (userId == 0)
         {
-            userNameText.text = "User: Наташа";
+            userNameText.text = "Пользователь: Наташа";
         }
         else
         {
-            userNameText.text = "User: Петр";
+            userNameText.text = "Пользователь: Петр";
         }
 
+        SendMessageToChat(userNameText.text, ChatMessage.MessageTypes.SystemMessage);
+        
+
         currentUserId = userId;
+        brainManager.currentUserId = userId;
     }
 
 

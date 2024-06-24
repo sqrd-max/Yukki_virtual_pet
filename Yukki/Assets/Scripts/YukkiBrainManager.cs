@@ -62,6 +62,8 @@ public class YukkiBrainManager : MonoBehaviour
     public UnityEvent<string> onResponse;
     public UnityEvent<string> onAnimationUpdate;
 
+    public int currentUserId = 0;
+
     private YukkiBrainCredentials _credentials;
     private bool _credentialsAreLoaded = false;
     void Start()
@@ -137,9 +139,19 @@ public class YukkiBrainManager : MonoBehaviour
         OpenAIClient client = new(_credentials.key, clientOptions);
         var assistantClient = client.GetAssistantClient();
         var assistantInfo = assistantClient.GetAssistant(_credentials.assistant).Value;
-        var threadInfo = assistantClient.GetThread("thread_pJiHvkNOYVTDQx2MaZV5jIW8").Value;
         
         
+        AssistantThread threadInfo;
+        if (currentUserId == 0)
+        {
+            threadInfo = assistantClient.GetThread("thread_pJiHvkNOYVTDQx2MaZV5jIW8").Value;
+        }
+        else
+        {
+            threadInfo = assistantClient.GetThread("thread_4yYjTyrns5kqKcM4XZNw75wz").Value;
+        }
+
+
         var message = assistantClient.CreateMessage(threadInfo, MessageRole.User, new[] { MessageContent.FromText(newText) },
         new MessageCreationOptions()
         {

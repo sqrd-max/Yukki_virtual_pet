@@ -476,12 +476,15 @@ MonoBehaviour:
   fbxModel: {fileID: 437690264}
   chatBox: {fileID: 369045000}
   modelAnimator: {fileID: 209567297}
-  userMessageColor: {r: 1, g: 1, b: 1, a: 0}
-  yukkiMessageColor: {r: 0.14779866, g: 0.437469, b: 1, a: 0}
-  systemMessageColor: {r: 0.7106918, g: 0.7106918, b: 0.7106918, a: 0}
+  userMessageColor: {r: 1, g: 1, b: 1, a: 1}
+  yukkiMessageColor: {r: 0.6194968, g: 0.7492537, b: 1, a: 0.99607843}
+  systemMessageColor: {r: 0.52201253, g: 0.49738926, b: 0.49738926, a: 0.99215686}
   player1Button: {fileID: 1146463488}
   player2Button: {fileID: 1417162124}
-  userNameText: {fileID: 1619235707}
+  userNameText: {fileID: 1992907465}
+  yukkiCloudText: {fileID: 1619235707}
+  lastMessageType: 2
+  currentUserId: 0
   availableAnimations:
   - Walk
   - HeadShakingNO
@@ -2405,6 +2408,7 @@ MonoBehaviour:
   onAnimationUpdate:
     m_PersistentCalls:
       m_Calls: []
+  currentUserId: 0
 --- !u!4 &1570293918
 Transform:
   m_ObjectHideFlags: 0
