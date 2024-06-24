@@ -12,14 +12,11 @@ using UnityEngine.Networking;
 using UnityEngine.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-#pragma warning disable OPENAI001
 
-using OpenAI;
-using OpenAI.Chat;
 using System.ClientModel.Primitives;
 
 #nullable disable
-
+#pragma warning disable OPENAI001
 
 
 public class YukkiBrainManager : MonoBehaviour
@@ -141,6 +138,7 @@ public class YukkiBrainManager : MonoBehaviour
         var assistantClient = client.GetAssistantClient();
         var assistantInfo = assistantClient.GetAssistant(_credentials.assistant).Value;
         var threadInfo = assistantClient.GetThread("thread_pJiHvkNOYVTDQx2MaZV5jIW8").Value;
+        
         
         var message = assistantClient.CreateMessage(threadInfo, MessageRole.User, new[] { MessageContent.FromText(newText) },
         new MessageCreationOptions()

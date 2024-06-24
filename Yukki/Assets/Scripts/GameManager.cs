@@ -18,10 +18,16 @@ public class GameManager : MonoBehaviour
     public GameObject chatPanel, textObject, fbxModel;
     public TMP_InputField chatBox;
     public Animator modelAnimator;
-    public Color userMessage, yukkiMessage;
+    public Color userMessageColor;
+    public Color yukkiMessageColor;
+    public Color systemMessageColor;
     
-    public Button player1Button; // You can assign this from the inspector
 
+    public Button player1Button;
+    public Button player2Button;// You can assign this from the inspector
+    public TMP_Text userNameText;
+
+    public int currentUserId;
     public string[] availableAnimations = {
         "Walk",
         "HeadShakingNO",
@@ -48,13 +54,19 @@ public class GameManager : MonoBehaviour
         // Add buttons event listeners
         player1Button = GameObject.Find("UserButton1").GetComponent<Button>();
         player1Button.onClick.AddListener(OnPlayer1ButtonPressed);
+        
+        player2Button = GameObject.Find("UserButton2").GetComponent<Button>();
+        player2Button.onClick.AddListener(OnPlayer2ButtonPressed);
+        
+        SetUserById(0);
     }
 
+    
 
 
     private void HandleOpenAIResponse(string response)
     {
-        SendMessageToChat(response, ChatMessage.MessageType.YukkiMessage); 
+        SendMessageToChat(response, ChatMessage.MessageTypes.YukkiMessage); 
     }
     
     
@@ -64,7 +76,7 @@ public class GameManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                SendMessageToChat(chatBox.text, ChatMessage.MessageType.UserMessage);
+                SendMessageToChat(chatBox.text, ChatMessage.MessageTypes.UserMessage);
                 brainManager.AskWithText(chatBox.text);
                 chatBox.text = "";
             }
@@ -77,12 +89,32 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayer1ButtonPressed()
     {
-        SendMessageToChat("Button1 pressed", ChatMessage.MessageType.YukkiMessage);
+        SendMessageToChat("Button1 pressed", ChatMessage.MessageTypes.SystemMessage);
+        SetUserById(0);
+    }
+    
+    private void OnPlayer2ButtonPressed()
+    {
+        SendMessageToChat("Button2 pressed", ChatMessage.MessageTypes.SystemMessage);
+        SetUserById(1);
+    }
+
+    private void SetUserById(int userId)
+    {
+        if (userId == 0)
+        {
+            userNameText.text = "User: Наташа";
+        }
+        else
+        {
+            userNameText.text = "User: Петр";
+        }
+
+        currentUserId = userId;
     }
 
 
-
-    void SendMessageToChat(string text, ChatMessage.MessageType messageType)
+    void SendMessageToChat(string text, ChatMessage.MessageTypes messageTypes)
     {
         if (messageList.Count >= maxMessages)
         {
@@ -99,10 +131,10 @@ public class GameManager : MonoBehaviour
         if (newChatMessage.textObject != null)
         {
             newChatMessage.textObject.text = newChatMessage.text;
-            newChatMessage.textObject.color = MessageTypeColor(messageType);
-            newChatMessage.textObject.alignment = messageType == ChatMessage.MessageType.UserMessage ?
+            newChatMessage.textObject.color = GetMessageColorByType(messageTypes);
+            newChatMessage.textObject.alignment = messageTypes == ChatMessage.MessageTypes.UserMessage ?
                 TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
-            newText.GetComponent<RectTransform>().pivot = new Vector2(messageType == ChatMessage.MessageType.UserMessage ? 1 : 0, 0.5f);
+            newText.GetComponent<RectTransform>().pivot = new Vector2(messageTypes == ChatMessage.MessageTypes.UserMessage ? 1 : 0, 0.5f);
 
             RectTransform textRect = newChatMessage.textObject.GetComponent<RectTransform>();
             messageList.Add(newChatMessage);
@@ -145,18 +177,17 @@ public class GameManager : MonoBehaviour
     }
 
     
-    Color MessageTypeColor(ChatMessage.MessageType messageType)
+    Color GetMessageColorByType(ChatMessage.MessageTypes messageTypes)
     {
-        Color color = yukkiMessage;
-
-        switch (messageType)
+        switch (messageTypes)
         {
-            case ChatMessage.MessageType.UserMessage:
-                color = userMessage;
-                break;
+            case ChatMessage.MessageTypes.UserMessage:
+                return userMessageColor;
+            case ChatMessage.MessageTypes.YukkiMessage:
+                return yukkiMessageColor;
+            default:
+                return systemMessageColor;
         }
-        
-        return color;
     }
     
     
@@ -167,11 +198,12 @@ public class ChatMessage
 {
     public string text;
     public TMP_Text textObject;
-    public MessageType messageType;
+    [FormerlySerializedAs("messageType")] public MessageTypes messageTypes;
     
-    public enum MessageType
+    public enum MessageTypes
     {
         UserMessage,
         YukkiMessage,
+        SystemMessage
     }
 }
