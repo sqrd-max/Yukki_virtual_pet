@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -20,7 +21,14 @@ public class GameManager : MonoBehaviour
     public Color userMessage, yukkiMessage;
     
     public Button player1Button; // You can assign this from the inspector
-    
+
+    public string[] availableAnimations = {
+        "Walk",
+        "HeadShakingNO",
+        "HeadNodYES",
+        "HandWaving",
+        "Angry"
+    };
     
     [SerializeField]
     List<ChatMessage> messageList = new List<ChatMessage>();
@@ -30,19 +38,19 @@ public class GameManager : MonoBehaviour
         if (brainManager != null)
         {
             brainManager.onResponse.AddListener(HandleOpenAIResponse);
+            brainManager.onAnimationUpdate.AddListener(CheckForAnimationCommand);
         }
         else
         {
             Debug.LogError("YukkiBrainManager is not assigned in GameManager");
         }
         
-        // Optionally, find the button by tag or name if it's not assigned
-        if (player1Button == null)
-            player1Button = GameObject.Find("UserButton1").GetComponent<Button>();
-
-        // Add a click listener to the button
+        // Add buttons event listeners
+        player1Button = GameObject.Find("UserButton1").GetComponent<Button>();
         player1Button.onClick.AddListener(OnPlayer1ButtonPressed);
     }
+
+
 
     private void HandleOpenAIResponse(string response)
     {
@@ -56,9 +64,8 @@ public class GameManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                brainManager.AskWithText(chatBox.text);
                 SendMessageToChat(chatBox.text, ChatMessage.MessageType.UserMessage);
-                CheckForAnimationCommand(chatBox.text);
+                brainManager.AskWithText(chatBox.text);
                 chatBox.text = "";
             }
         }
@@ -123,30 +130,18 @@ public class GameManager : MonoBehaviour
     //     fbxModel.transform.localScale = new Vector3(-200f * widthScaleFactor, -200f * heightScaleFactor, -200f);
     // }
     
-    void CheckForAnimationCommand(string message)
+    void CheckForAnimationCommand(string animationName)
     {
-        message = message.ToLower();
-        if (message.Contains("walk"))
+
+        if (availableAnimations.Contains(animationName))
         {
-            modelAnimator.SetTrigger("Walk");
+            Debug.Log($"Playing animation: '{animationName}'");
+            modelAnimator.SetTrigger(animationName);
         }
-        else if (message.Contains("no") || message.Contains("head shake"))
+        else
         {
-            modelAnimator.SetTrigger("HeadShakingNO");
+            Debug.Log($"Animation '{animationName}' is not found in available animations");
         }
-        else if (message.Contains("yes") || message.Contains("head nod"))
-        {
-            modelAnimator.SetTrigger("HeadNodYES");
-        }
-        else if (message.Contains("hello") || message.Contains("hand wave") || message.Contains("hi"))
-        {
-            modelAnimator.SetTrigger("HandWaving");
-        }
-        else if (message.Contains("angry"))
-        {
-            modelAnimator.SetTrigger("Angry");
-        }
-        
     }
 
     

@@ -11,7 +11,7 @@ using UnityEngine.Events;
 using UnityEngine.Networking;
 using UnityEngine.Serialization;
 using Newtonsoft.Json;
-
+using Newtonsoft.Json.Linq;
 #pragma warning disable OPENAI001
 
 using OpenAI;
@@ -24,6 +24,10 @@ using System.ClientModel.Primitives;
 
 public class YukkiBrainManager : MonoBehaviour
 {
+    /// <summary>
+    /// This class is to fix
+    /// https://github.com/openai/openai-dotnet/issues/68
+    /// </summary>
     public class AddAuthHeadersPolicy : PipelinePolicy
     {
         public string OrganizationId { get; set; }
@@ -59,6 +63,7 @@ public class YukkiBrainManager : MonoBehaviour
     }
     
     public UnityEvent<string> onResponse;
+    public UnityEvent<string> onAnimationUpdate;
 
     private YukkiBrainCredentials _credentials;
     private bool _credentialsAreLoaded = false;
@@ -134,8 +139,8 @@ public class YukkiBrainManager : MonoBehaviour
         
         OpenAIClient client = new(_credentials.key, clientOptions);
         var assistantClient = client.GetAssistantClient();
-        var assistantInfo = assistantClient.GetAssistant(_credentials.assistant);
-        var threadInfo = assistantClient.GetThread(_credentials.thread);
+        var assistantInfo = assistantClient.GetAssistant(_credentials.assistant).Value;
+        var threadInfo = assistantClient.GetThread("thread_pJiHvkNOYVTDQx2MaZV5jIW8").Value;
         
         var message = assistantClient.CreateMessage(threadInfo, MessageRole.User, new[] { MessageContent.FromText(newText) },
         new MessageCreationOptions()
@@ -143,43 +148,10 @@ public class YukkiBrainManager : MonoBehaviour
         
         });
         
-        var updates = assistantClient.CreateRunStreaming(threadInfo, assistantInfo);
-
-        ThreadRun currentRun = null;
-        do
-        {
-            currentRun = null;
-            List<ToolOutput> outputsToSubmit = new List<ToolOutput>();
-            foreach (StreamingUpdate update in updates)
-            {
-                if (update is RunUpdate runUpdate)
-                {
-                    currentRun = runUpdate;
-                }
-                else if (update is RequiredActionUpdate requiredActionUpdate)
-                {
-                    Debug.Log("Requested function call: " + requiredActionUpdate.FunctionName);
-                    // if (requiredActionUpdate.FunctionName == getTemperatureTool.FunctionName)
-                    // {
-                    outputsToSubmit.Add(new ToolOutput(requiredActionUpdate.ToolCallId, "true"));
-                    // }
-                    // else if (requiredActionUpdate.FunctionName == getRainProbabilityTool.FunctionName)
-                    // {
-                    //     outputsToSubmit.Add(new ToolOutput(requiredActionUpdate.ToolCallId, "25%"));
-                    // }
-                }
-                else if (update is MessageContentUpdate contentUpdate)
-                {
-                    Debug.Log(contentUpdate.Text);
-                    onResponse?.Invoke(contentUpdate.Text);
-                }
-            }
-            if (outputsToSubmit.Count > 0)
-            {
-                updates = assistantClient.SubmitToolOutputsToRunStreaming(currentRun, outputsToSubmit);
-            }
-        }
-        while (currentRun?.Status.IsTerminal == false);
+        var updates = assistantClient.CreateRunStreamingAsync(threadInfo, assistantInfo);
+        
+        
+        ProcessThreadRun(assistantClient, updates);
         
         // var taskGetAssistant = assistantClient.GetAssistantAsync(_credentials.assistant);
         // var taskGetThread = assistantClient.GetThreadAsync(_credentials.thread);
@@ -197,7 +169,67 @@ public class YukkiBrainManager : MonoBehaviour
 
 
     }
-    
+
+    private async void ProcessThreadRun(AssistantClient assistantClient, AsyncResultCollection<StreamingUpdate> updates)
+    {
+        ThreadRun currentRun = null;
+        do
+        {
+            currentRun = null;
+            List<ToolOutput> outputsToSubmit = new List<ToolOutput>();
+            await foreach (StreamingUpdate update in updates)
+            {
+                if (update is RunUpdate runUpdate)
+                {
+                    currentRun = runUpdate;
+                }
+                else if (update is RequiredActionUpdate requiredActionUpdate)
+                {
+                    Debug.Log("Requested function call: " + requiredActionUpdate.FunctionName);
+
+                    if (requiredActionUpdate.FunctionName == "animation")
+                    {
+                        try
+                        {
+                            JObject jsonObject = JObject.Parse(requiredActionUpdate.FunctionArguments);
+                            JToken animationNameToken;
+            
+                            // Check if 'animation_name' exists and is not empty
+                            if (jsonObject.TryGetValue("animation_name", out animationNameToken) &&
+                                !string.IsNullOrEmpty(animationNameToken.ToString()))
+                            {
+                                var animationName = animationNameToken.Value<string>();
+                                Debug.Log("JSon parsed animation name: " + animationName);
+                                onAnimationUpdate?.Invoke(animationName);
+                            }
+                        }
+                        catch (System.Exception ex)
+                        {
+                            Debug.LogError("Failed to parse Animation function JSON: " + ex.Message);
+                        }
+                    }
+                    // if (requiredActionUpdate.FunctionName == getTemperatureTool.FunctionName)
+                    // {
+                    outputsToSubmit.Add(new ToolOutput(requiredActionUpdate.ToolCallId, "true"));
+                    // }
+                    // else if (requiredActionUpdate.FunctionName == getRainProbabilityTool.FunctionName)
+                    // {
+                    //     outputsToSubmit.Add(new ToolOutput(requiredActionUpdate.ToolCallId, "25%"));
+                    // }
+                }
+                else if (update is MessageContentUpdate contentUpdate)
+                {
+                    Debug.Log(contentUpdate.Text);
+                    onResponse?.Invoke(contentUpdate.Text);
+                }
+            }
+            if (outputsToSubmit.Count > 0 && currentRun != null)
+            {
+                updates = assistantClient.SubmitToolOutputsToRunStreamingAsync(currentRun, outputsToSubmit);
+            }
+        }
+        while (currentRun?.Status.IsTerminal == false);
+    }
 
 
     // private OpenAIApi openAI = new OpenAIApi();
